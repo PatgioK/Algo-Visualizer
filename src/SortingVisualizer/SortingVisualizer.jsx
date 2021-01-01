@@ -16,7 +16,7 @@ export default class SortingVisualizer extends React.Component {
     resetArray() {
         const array = [];
         for(let i = 0; i < 500; i++) {
-            array.push(randomIntfromInterval(10, 1000));
+            array.push(randomIntfromInterval(10, 700));
         }
         this.setState({array});
     }
@@ -26,16 +26,18 @@ export default class SortingVisualizer extends React.Component {
         const {array} = this.state;
 
         return (
-            <>
+            <div className='array-container'>
                 {array.map((value, idx) => (
-                    <div className='array-bar' key={idx}>
-                    {value}
+                    <div
+                    className='array-bar' 
+                    key={idx}
+                    // $ dollarsign makes a css variable
+                    style={{height: `${value}px`}}
+                    >
+                    &nbsp;
                     </div>
-                ))
-                
-                
-                }
-            </>
+                ))}
+            </div>
         );
     }
 }
