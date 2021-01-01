@@ -1,14 +1,13 @@
 .array-container {
-    height: 100vh; /* Magic here */
+    height: 98vh; /* Magic here */
     display: flex;
     justify-content: center;
     align-items: flex-end;
 }
 
 .array-bar {
-    width: 30px;
-    height: 30px;
+    width: 4px;
     background-color: aqua;
-    display: inline;
-    margin: 0 2px;
+    display: inline-block;
+    margin: 0 1px;
 }

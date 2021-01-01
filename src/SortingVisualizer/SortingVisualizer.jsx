@@ -15,8 +15,8 @@ export default class SortingVisualizer extends React.Component {
 
     resetArray() {
         const array = [];
-        for(let i = 0; i < 500; i++) {
-            array.push(randomIntfromInterval(10, 700));
+        for(let i = 0; i < 180; i++) {
+            array.push(randomIntfromInterval(10, 600));
         }
         this.setState({array});
     }
@@ -25,7 +25,15 @@ export default class SortingVisualizer extends React.Component {
     render() {
         const {array} = this.state;
 
+        // Arrow function to use "this" context in the resetArray callback function: this.setState({array})
         return (
+            <React.Fragment>
+                <button onClick={() => this.resetArray()}>Generate Array</button>
+                <button onClick={() => this.insertionSort()}>Insertion Sort</button>
+                <button onClick={() => this.mergeSort()}>Merge Sort</button>
+                <button onClick={() => this.quickSort()}>Quick Sort</button>
+                <button onClick={() => this.heapSort()}>Heap Sort</button>
+                <button onClick={() => this.bubbleSort()}>Bubble Sort</button>
             <div className='array-container'>
                 {array.map((value, idx) => (
                     <div
@@ -34,10 +42,10 @@ export default class SortingVisualizer extends React.Component {
                     // $ dollarsign makes a css variable
                     style={{height: `${value}px`}}
                     >
-                    &nbsp;
                     </div>
                 ))}
             </div>
+            </React.Fragment>
         );
     }
 }
