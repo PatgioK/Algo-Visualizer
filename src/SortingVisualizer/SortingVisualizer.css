@@ -6,8 +6,8 @@
 }
 
 .array-bar {
-    width: 4px;
-    background-color: aqua;
+    width: 8px;
+    /* background-color: aqua; */
     display: inline-block;
     margin: 0 1px;
 }

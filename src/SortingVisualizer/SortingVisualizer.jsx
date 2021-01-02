@@ -1,6 +1,9 @@
 import React from 'react';
 import './SortingVisualizer.css';
-import { getMergeSortAnimations } from '../SortingAlgorithms/SortingAlgorithms';
+import { getMergeSortAnimations } from '../SortingAlgorithms/MergeSort';
+import { getInsertionSortAnimations } from '../SortingAlgorithms/InsertionSort';
+
+
 
 // Original color of the array bars.
 const PRIMARY_COLOR = 'aqua';
@@ -10,6 +13,9 @@ const SECONDARY_COLOR = 'green';
 
 // Speed of the animation in ms.
 const ANIMATION_SPEED_MS = 3;
+
+// Number of array bars.
+const NUMBER_OF_BARS = 50;
 
 export default class SortingVisualizer extends React.Component {
     constructor(props) {
@@ -26,7 +32,7 @@ export default class SortingVisualizer extends React.Component {
 
     resetArray() {
         const array = [];
-        for(let i = 0; i < 180; i++) {
+        for(let i = 0; i < NUMBER_OF_BARS; i++) {
             array.push(randomIntfromInterval(10, 600));
         }
         this.setState({array});
@@ -61,6 +67,23 @@ export default class SortingVisualizer extends React.Component {
         }
     }
 
+    insertionSort() {
+        // const animations = getInsertionSortAnimations(this.state.array);
+        let array = this.state.array;
+        if(array.length === 1)
+            return;
+        // Start at 1, because first step subarray will only contain 1 value.
+        for(let i = 1; i < array.length; i++) {
+            let value = array[i];
+            let j = i - 1;
+            while(j >= 0 && array[j] > value) {
+                array[j + 1] = array[j];
+                j = j - 1;
+            }
+            array[j + 1] = value;
+        }
+        this.setState({array});
+    }
 
     render() {
         const {array} = this.state;
