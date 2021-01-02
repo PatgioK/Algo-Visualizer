@@ -23,10 +23,10 @@ function doMerge(mainArray, start, middle, end, auxArray, animations){
     let a = start;
     let b = start;
     let c = middle + 1;
-    while(a <= middle && c <= end) {
+    while(b <= middle && c <= end) {
         // These are the values we are comparing; push once to change color, push second time to revert color.
-        animations.push([a, c]);
-        animations.push([a, c]);
+        animations.push([b, c]);
+        animations.push([b, c]);
 
         if(auxArray[b] <= auxArray[c]) {
             // We overwrite the value at a in the original array with value at index b in the auxiliary array.

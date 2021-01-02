@@ -2,9 +2,10 @@ import React from 'react';
 import './SortingVisualizer.css';
 import { getMergeSortAnimations } from '../SortingAlgorithms/SortingAlgorithms';
 
-
+// Original color of the array bars.
 const PRIMARY_COLOR = 'aqua';
 
+// Color we change to when we are comparing array bars.
 const SECONDARY_COLOR = 'green';
 
 // Speed of the animation in ms.
@@ -18,6 +19,7 @@ export default class SortingVisualizer extends React.Component {
         };
     }
 
+    // React function runs first time component is rendered, client side only.
     componentDidMount() {
         this.resetArray();
     }
@@ -45,11 +47,14 @@ export default class SortingVisualizer extends React.Component {
                 setTimeout(() => {
                     barOneStyle.backgroundColor = color;
                     barTwoStyle.backgroundColor = color;
+                    // forloop happens instantly in javascript, so for each index i we want to multiply the delay by the index.
                 }, i * ANIMATION_SPEED_MS);
             } else {
                 setTimeout(() => {
                     const [barOneIdx, newHeight] = animations[i];
                     const barOneStyle = arrayBars[barOneIdx].style;
+
+                    // Javascript bug, we want to get the value of the variable and then change to html + px;
                     barOneStyle.height = `${newHeight}px`;
                 }, i * ANIMATION_SPEED_MS);
             }
@@ -60,8 +65,9 @@ export default class SortingVisualizer extends React.Component {
     render() {
         const {array} = this.state;
 
-        // Arrow function to use "this" context in the resetArray callback function: this.setState({array})
         return (
+            // Arrow function to use "this" context in the resetArray callback function: this.setState({array}).
+            // React.Fragment allows us to return multiple elements under the same DOM.
             <React.Fragment>
                 <button onClick={() => this.resetArray()}>Generate Array</button>
                 <button onClick={() => this.insertionSort()}>Insertion Sort</button>
