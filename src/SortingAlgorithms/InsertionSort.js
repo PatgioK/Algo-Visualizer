@@ -1,21 +1,19 @@
-export function getInsertionSortAnimations(arrayprop) {
-    let array = arrayprop;
+export function getInsertionSortAnimations(array) {
+    let auxArray = array;
     const animations = [];
-    if(array.length === 1)
+    if(auxArray.length === 1)
         return;
-    // Start at 1, because first step subarray will only contain 1 value.
-    for(let i = 1; i < array.length; i++) {
-        let value = array[i];
+
+    for(let i = 1; i < auxArray.length; i++) {
+        let value = auxArray[i];
         let j = i - 1;
-        animations.push([i, array[i]]);
-        while(j >= 0 && array[j] > value) {
-            array[j + 1] = array[j];
-
-
+        animations.push([i, auxArray[i]]);   //initial index
+        while(j >= 0 && auxArray[j] > value) {
+            auxArray[j + 1] = auxArray[j];
             j = j - 1;
         }
-        array[j + 1] = value;
-        animations.push([j + 1, value]);
+        auxArray[j + 1] = value;
+        animations.push([j + 1, value]);    //sorted index
     }
     return animations;
 }

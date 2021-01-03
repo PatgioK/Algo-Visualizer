@@ -70,62 +70,45 @@ export default class SortingVisualizer extends React.Component {
             }
         }
     }
-    insertAndShift(arr, from, to) {
-        let cutOut = arr.splice(from, 1); // cut the element at index 'from'
-        arr.splice(to, 0, cutOut);            // insert it at index 'to'
-    }
-    insertionSort() {
+
+    async insertionSort() {
         const animations = getInsertionSortAnimations(this.state.array);
         const arrayBars = document.getElementsByClassName('array-bar');
 
         let auxArray = this.state.array.slice();
-
-        let barOneIdx;
-        let barOneValue;
-
-        let barTwoIdx;
-        let barTwoValue;
+        let [barOneIdx, barOneValue] = [0,0];
+        let [barTwoIdx, barTwoValue] = [0,0];
 
         for(let i = 0; i < animations.length; i++) {
-            let isFirstAnimation = i % 2 !== 1;
-            if(isFirstAnimation) {
-                const [barOneIdx, valueOne] = animations[i];
+            let isFirstPair = i % 2 !== 1;
+
+            if(isFirstPair) {
+                console.log(animations[i]);
+                [barOneIdx, barOneValue] = animations[i];
+                // Changes comparing bar twice, once to change color and second time to revert
                 setTimeout(() => {
                     arrayBars[barOneIdx].style.backgroundColor = SECONDARY_COLOR;
                 }, i * ANIMATION_SPEED_MS);
-            } else {
-                const [barTwoIdx, valueTwo] = animations[i];
-                this.insertAndShift(auxArray, barOneIdx, barTwoIdx);
-                this.setState({array: auxArray});
                 setTimeout(() => {
-                    
+                    arrayBars[barOneIdx].style.backgroundColor = PRIMARY_COLOR;
                 }, i * ANIMATION_SPEED_MS + ANIMATION_SPEED_MS);
+                
+            } else {
+                console.log(animations[i]);
+                // ACTUAL PART I NEED HELP WITH
+                let cutIdx = auxArray[barOneIdx];
+                auxArray.splice(barOneIdx, 1);
+                auxArray.splice(barTwoIdx, 0, cutIdx);
+
+                this.setState({array : auxArray});
+                setTimeout(() => {
+                    arrayBars[barTwoIdx].style.backgroundColor = SECONDARY_COLOR;
+                }, i * ANIMATION_SPEED_MS);
+                setTimeout(() => {
+                    arrayBars[barTwoIdx].style.backgroundColor = PRIMARY_COLOR;
+                }, i * ANIMATION_SPEED_MS);
             }
         }
-
-
-
-
-
-
-        // for (let i = 0; i < animations.length; i++) {
-        //     console.log(animations[i]);
-        //     const [barOneIdx, value] = animations[i];
-        //     const barOneStyle = arrayBars[barOneIdx].style;
-        //     const firstPair = i % 2 !== 1;
-        //     if (firstPair) {
-        //         setTimeout(() => {
-        //             barOneStyle.backgroundColor = SECONDARY_COLOR;
-        //         }, i * ANIMATION_SPEED_MS);
-
-        //         setTimeout(() => {
-        //             barOneStyle.backgroundColor = PRIMARY_COLOR;
-        //         }, i * ANIMATION_SPEED_MS + ANIMATION_SPEED_MS);
-        //     } else {
-        //         barOneStyle.height = `${value}px`;
-        //     }
-        // }
-        //this.setState({array});
     }
 
     render() {
