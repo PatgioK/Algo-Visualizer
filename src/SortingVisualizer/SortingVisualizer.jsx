@@ -2,6 +2,7 @@ import React from 'react';
 import './SortingVisualizer.css';
 import { getMergeSortAnimations } from '../SortingAlgorithms/MergeSort';
 import { getInsertionSortAnimations } from '../SortingAlgorithms/InsertionSort';
+import { setTimeout } from 'timers';
 
 
 
@@ -12,10 +13,10 @@ const PRIMARY_COLOR = 'aqua';
 const SECONDARY_COLOR = 'green';
 
 // Speed of the animation in ms.
-const ANIMATION_SPEED_MS = 3;
+const ANIMATION_SPEED_MS = 200;
 
 // Number of array bars.
-const NUMBER_OF_BARS = 50;
+const NUMBER_OF_BARS = 5;
 
 export default class SortingVisualizer extends React.Component {
     constructor(props) {
@@ -32,21 +33,23 @@ export default class SortingVisualizer extends React.Component {
 
     resetArray() {
         const array = [];
-        for(let i = 0; i < NUMBER_OF_BARS; i++) {
+        for (let i = 0; i < NUMBER_OF_BARS; i++) {
             array.push(randomIntfromInterval(10, 600));
         }
-        this.setState({array});
+        this.setState({ array });
     }
 
     mergeSort() {
         const animations = getMergeSortAnimations(this.state.array);
-        for(let i = 0; i < animations.length; i++){
-            const arrayBars = document.getElementsByClassName('array-bar');
+        const arrayBars = document.getElementsByClassName('array-bar');
 
+        for (let i = 0; i < animations.length; i++) {
+            console.log(animations[i]);
             // Animations come in triplets. First two animations are what we are comparing
+            // Third animation we overwrite the height
             const isColorChange = i % 3 !== 2;
-            if(isColorChange) {
-                const[barOneIdx, barTwoIdx] = animations[i];
+            if (isColorChange) {
+                const [barOneIdx, barTwoIdx] = animations[i];
                 const barOneStyle = arrayBars[barOneIdx].style;
                 const barTwoStyle = arrayBars[barTwoIdx].style;
                 const color = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
@@ -61,57 +64,99 @@ export default class SortingVisualizer extends React.Component {
                     const barOneStyle = arrayBars[barOneIdx].style;
 
                     // Javascript bug, we want to get the value of the variable and then change to html + px;
+                    // use extra functionality backtick and ${ } to embed variable into html;
                     barOneStyle.height = `${newHeight}px`;
                 }, i * ANIMATION_SPEED_MS);
             }
         }
     }
-
+    insertAndShift(arr, from, to) {
+        let cutOut = arr.splice(from, 1); // cut the element at index 'from'
+        arr.splice(to, 0, cutOut);            // insert it at index 'to'
+    }
     insertionSort() {
-        // const animations = getInsertionSortAnimations(this.state.array);
-        let array = this.state.array;
-        if(array.length === 1)
-            return;
-        // Start at 1, because first step subarray will only contain 1 value.
-        for(let i = 1; i < array.length; i++) {
-            let value = array[i];
-            let j = i - 1;
-            while(j >= 0 && array[j] > value) {
-                array[j + 1] = array[j];
-                j = j - 1;
+        const animations = getInsertionSortAnimations(this.state.array);
+        const arrayBars = document.getElementsByClassName('array-bar');
+
+        let auxArray = this.state.array.slice();
+
+        let barOneIdx;
+        let barOneValue;
+
+        let barTwoIdx;
+        let barTwoValue;
+
+        for(let i = 0; i < animations.length; i++) {
+            let isFirstAnimation = i % 2 !== 1;
+            if(isFirstAnimation) {
+                const [barOneIdx, valueOne] = animations[i];
+                setTimeout(() => {
+                    arrayBars[barOneIdx].style.backgroundColor = SECONDARY_COLOR;
+                }, i * ANIMATION_SPEED_MS);
+            } else {
+                const [barTwoIdx, valueTwo] = animations[i];
+                this.insertAndShift(auxArray, barOneIdx, barTwoIdx);
+                this.setState({array: auxArray});
+                setTimeout(() => {
+                    
+                }, i * ANIMATION_SPEED_MS + ANIMATION_SPEED_MS);
             }
-            array[j + 1] = value;
         }
-        this.setState({array});
+
+
+
+
+
+
+        // for (let i = 0; i < animations.length; i++) {
+        //     console.log(animations[i]);
+        //     const [barOneIdx, value] = animations[i];
+        //     const barOneStyle = arrayBars[barOneIdx].style;
+        //     const firstPair = i % 2 !== 1;
+        //     if (firstPair) {
+        //         setTimeout(() => {
+        //             barOneStyle.backgroundColor = SECONDARY_COLOR;
+        //         }, i * ANIMATION_SPEED_MS);
+
+        //         setTimeout(() => {
+        //             barOneStyle.backgroundColor = PRIMARY_COLOR;
+        //         }, i * ANIMATION_SPEED_MS + ANIMATION_SPEED_MS);
+        //     } else {
+        //         barOneStyle.height = `${value}px`;
+        //     }
+        // }
+        //this.setState({array});
     }
 
     render() {
-        const {array} = this.state;
+        const { array } = this.state;
 
         return (
             // Arrow function to use "this" context in the resetArray callback function: this.setState({array}).
             // React.Fragment allows us to return multiple elements under the same DOM.
             <React.Fragment>
-                <button onClick={() => this.resetArray()}>Generate Array</button>
-                <button onClick={() => this.insertionSort()}>Insertion Sort</button>
-                <button onClick={() => this.mergeSort()}>Merge Sort</button>
-                <button onClick={() => this.quickSort()}>Quick Sort</button>
-                <button onClick={() => this.heapSort()}>Heap Sort</button>
-                <button onClick={() => this.bubbleSort()}>Bubble Sort</button>
-            <div className='array-container'>
-                {array.map((value, idx) => (
-                    <div
-                    className='array-bar' 
-                    key={idx}
-                    // $ dollarsign makes a css variable???
-                    style={{
-                        backgroundColor: PRIMARY_COLOR,
-                        height: `${value}px`,
-                    }}
-                    >
-                    </div>
-                ))}
-            </div>
+                <div className='button-bar'>
+                    <button onClick={() => this.resetArray()}>Generate Array</button>
+                    <button onClick={() => this.insertionSort()}>Insertion Sort</button>
+                    <button onClick={() => this.mergeSort()}>Merge Sort</button>
+                    <button onClick={() => this.quickSort()}>Quick Sort</button>
+                    <button onClick={() => this.heapSort()}>Heap Sort</button>
+                    <button onClick={() => this.bubbleSort()}>Bubble Sort</button>
+                </div>
+                <div className='array-container'>
+                    {array.map((value, idx) => (
+                        <div
+                            className='array-bar'
+                            key={idx}
+                            // $ dollarsign makes a css variable???
+                            style={{
+                                backgroundColor: PRIMARY_COLOR,
+                                height: `${value}px`,
+                            }}
+                        >
+                        </div>
+                    ))}
+                </div>
             </React.Fragment>
         );
     }

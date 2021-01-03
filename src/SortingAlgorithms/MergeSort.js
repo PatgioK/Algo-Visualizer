@@ -50,7 +50,7 @@ function doMerge(mainArray, start, middle, end, auxArray, animations){
     }
 
     while(c <= end) {
-        // These are the values we are compaing; we push once to change color, push second time to revert color.
+        // These are the values we are comparing; push once to change color, push second time to revert color.
         animations.push([c, c])
         animations.push([c, c])
 
