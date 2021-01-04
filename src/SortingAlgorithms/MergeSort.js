@@ -1,4 +1,5 @@
-
+// Followed from Clément Mihailescu's React tutorial 
+// https://github.com/clementmihailescu/Sorting-Visualizer-Tutorial
 export function getMergeSortAnimations(array) {
     const animations = [];
     if(array.length <= 1) {
@@ -59,4 +60,4 @@ function doMerge(mainArray, start, middle, end, auxArray, animations){
         mainArray[a++] = auxArray[c++];
     }
 }
-
+ 
