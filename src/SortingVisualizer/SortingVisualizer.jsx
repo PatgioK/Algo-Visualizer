@@ -6,23 +6,42 @@ import { setTimeout } from "timers";
 // Original color of the array bars.
 const PRIMARY_COLOR = "aqua";
 
-// Color we change to when we are comparing array bars.
-const SECONDARY_COLOR = "green";
+// Color for when we are comparing array bars.
+const SECONDARY_COLOR = "lightgreen";
+
+// Color for sorted final bar.
+const TERTIARY_COLOR = "gold"
 
 // Speed of the animation in ms.
 const ANIMATION_SPEED_MS = 100;
 
-// Number of array bars.
-const NUMBER_OF_BARS = 40;
+// Lower bound height for bars
+const LOWER_INTERVAL = 10;
 
-const sleep = (millis) => {
-    return new Promise((resolve) => setTimeout(resolve, millis));
+// Upper bound height for bars.
+const UPPER_INTERVAL = 250
+
+// Number of array bars.
+const NUMBER_OF_BARS = 5;
+
+// Javascript sleep() best practice found at:
+// https://stackoverflow.com/questions/951021/what-is-the-javascript-version-of-sleep/39914235#39914235
+const sleep = (ms) => {
+    console.log('sleep');
+    return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
+// Function to move elements from one index to another.
 function arraymove(arr, fromIndex, toIndex) {
     var element = arr[fromIndex];
     arr.splice(fromIndex, 1);
     arr.splice(toIndex, 0, element);
+}
+
+// Generates random Integer in given interval.
+// From https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript
+function randomIntfromInterval(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 export default class SortingVisualizer extends React.Component {
@@ -38,22 +57,23 @@ export default class SortingVisualizer extends React.Component {
         this.resetArray();
     }
 
+    // Generates a new array and sets it to the state.
     resetArray() {
         const array = [];
         for (let i = 0; i < NUMBER_OF_BARS; i++) {
             array.push({
-                height: randomIntfromInterval(198, 200),
+                height: randomIntfromInterval(LOWER_INTERVAL, UPPER_INTERVAL),
                 color: PRIMARY_COLOR
             });
         }
         this.setState({ array });
     }
 
+    // Insertion sort algorithm 
     insertionSort = async () => {
         const { array } = this.state;
-        let auxArray = array.slice();
 
-        for(let i = 0; i < array.length; i++) {
+        for (let i = 0; i < array.length; i++) {
             array[i].color = SECONDARY_COLOR;
             this.setState(array);
             await sleep(ANIMATION_SPEED_MS);
@@ -61,12 +81,99 @@ export default class SortingVisualizer extends React.Component {
                 (el) => el.height >= array[i].height
             );
             arraymove(array, i, sortedIndex);
+            array[sortedIndex].color = TERTIARY_COLOR;
             this.setState(array);
 
             await sleep(ANIMATION_SPEED_MS);
         }
     }
 
+    // Bubble sort algorithm
+    bubbleSort = async () => {
+        const { array } = this.state;
+        console.log(array);
+        await sleep(ANIMATION_SPEED_MS);
+        for (let i = 0; i < array.length - 1; i++) {
+            for (let j = 0; j < array.length - 1 - i; j++) {
+                array[j].color = SECONDARY_COLOR;
+                array[j + 1].color = SECONDARY_COLOR;
+                await sleep(ANIMATION_SPEED_MS);
+                if (array[j + 1].height <= array[j].height) {
+                    arraymove(array, j, j + 1);
+                }
+                this.setState(array);
+                await sleep(ANIMATION_SPEED_MS);
+                array[j].color = PRIMARY_COLOR;
+                array[j + 1].color = TERTIARY_COLOR;
+            }
+        }
+        array[0].color = TERTIARY_COLOR;  // Change last bar to finished color.
+        await sleep(ANIMATION_SPEED_MS);
+        this.setState(array);
+        console.log(array);
+    }
+
+    // Setup function for actualMergeSort();
+    mergeSort = async () => {
+        const { array } = this.state;
+        console.log('State Array');
+        console.log(array);
+        const auxArray = [];
+        // console.log('before actualmergesort');
+        this.actualMergeSort(array, auxArray, 0, array.length);
+        // console.log('after actualmergesort');
+    }
+
+    actualMergeSort = async (array, auxArray, start, end) => {
+        if (start === end) {
+            return;
+        }
+        let middle = Math.floor((start + end) / 2);
+        let midStart = middle + 1;
+        this.actualMergeSort(array, auxArray, start, middle);
+        this.actualMergeSort(array, auxArray, midStart, end);
+        // console.log('before merging')
+        // console.log(auxArray);
+
+        // console.log('start:' + start + ' middle:' + middle + ' midStart:' + midStart + ' end:' + end);
+
+        while (start < middle && midStart < end) {
+            console.log(array[start]);
+            console.log(array[midStart]);
+            if (array[start].height <= array[midStart].height) {
+
+                auxArray[start] = array[start];
+                start++;
+            } else {
+                auxArray[start] = array[midStart];
+                midStart++;
+            }
+        }
+        console.log("auxArray[start]:");
+        console.log(auxArray[start]);
+
+        if (start === middle) {
+            while (midStart < end) {
+                auxArray[midStart] = array[midStart];
+                midStart++;
+            }
+        } else {
+            while (start < middle) {
+                auxArray[start] = array[start];
+                start++;
+            }
+        }
+        // console.log(auxArray);
+        this.setState({ array: auxArray });
+        // console.log('after merging');
+        // console.log('SHOULD BE DONE');
+        return;
+    };
+
+
+    arrayLog() {
+        console.log(this.state.array);
+    }
 
     render() {
         const { array } = this.state;
@@ -82,6 +189,7 @@ export default class SortingVisualizer extends React.Component {
                     <button onClick={() => this.quickSort()}>Quick Sort</button>
                     <button onClick={() => this.heapSort()}>Heap Sort</button>
                     <button onClick={() => this.bubbleSort()}>Bubble Sort</button>
+                    <button onClick={() => this.arrayLog()}>Array Log</button>
                 </div>
                 <div className="array-container">
                     {array.map((item, idx) => (
@@ -126,10 +234,4 @@ export default class SortingVisualizer extends React.Component {
 
     //     this.animateSorting(sorted);
     // }
-}
-
-// Generates random Integer in given interval.
-// From https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript
-function randomIntfromInterval(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
 }
