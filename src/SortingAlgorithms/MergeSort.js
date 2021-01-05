@@ -61,3 +61,39 @@ function doMerge(mainArray, start, middle, end, auxArray, animations){
     }
 }
  
+
+
+    // Followed from Clément Mihailescu's React tutorial 
+    // https://github.com/clementmihailescu/Sorting-Visualizer-Tutorial
+
+    // mergeSort() {
+    //     const animations = getMergeSortAnimations(this.state.array);
+    //     const arrayBars = document.getElementsByClassName('array-bar');
+
+    //     for (let i = 0; i < animations.length; i++) {
+    //         // console.log(animations[i]);
+    //         // Animations come in triplets. First two animations are what we are comparing
+    //         // Third animation we overwrite the height
+    //         const isColorChange = i % 3 !== 2;
+    //         if (isColorChange) {
+    //             const [barOneIdx, barTwoIdx] = animations[i];
+    //             const barOneStyle = arrayBars[barOneIdx].style;
+    //             const barTwoStyle = arrayBars[barTwoIdx].style;
+    //             const color = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+    //             setTimeout(() => {
+    //                 barOneStyle.backgroundColor = color;
+    //                 barTwoStyle.backgroundColor = color;
+    //                 // forloop happens instantly in javascript, so for each index i we want to multiply the delay by the index.
+    //             }, i * ANIMATION_SPEED_MS);
+    //         } else {
+    //             setTimeout(() => {
+    //                 const [barOneIdx, newHeight] = animations[i];
+    //                 const barOneStyle = arrayBars[barOneIdx].style;
+
+    //                 // Javascript bug, we want to get the value of the variable and then change to html + px;
+    //                 // use extra functionality backtick and ${ } to embed variable into html;
+    //                 barOneStyle.height = `${newHeight}px`;
+    //             }, i * ANIMATION_SPEED_MS);
+    //         }
+    //     }
+    // }
