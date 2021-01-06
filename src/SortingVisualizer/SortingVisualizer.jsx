@@ -13,7 +13,7 @@ const SECONDARY_COLOR = "lightgreen";
 const TERTIARY_COLOR = "gold"
 
 // Speed of the animation in ms.
-const ANIMATION_SPEED_MS = 100;
+const ANIMATION_SPEED_MS = 1000;
 
 // Lower bound height for bars
 const LOWER_INTERVAL = 10;
@@ -22,12 +22,11 @@ const LOWER_INTERVAL = 10;
 const UPPER_INTERVAL = 250
 
 // Number of array bars.
-const NUMBER_OF_BARS = 5;
+const NUMBER_OF_BARS = 4;
 
 // Javascript sleep() best practice found at:
 // https://stackoverflow.com/questions/951021/what-is-the-javascript-version-of-sleep/39914235#39914235
 const sleep = (ms) => {
-    console.log('sleep');
     return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
@@ -113,65 +112,92 @@ export default class SortingVisualizer extends React.Component {
         console.log(array);
     }
 
-    // Setup function for actualMergeSort();
     mergeSort = async () => {
-        const { array } = this.state;
-        console.log('State Array');
-        console.log(array);
-        const auxArray = [];
-        // console.log('before actualmergesort');
-        this.actualMergeSort(array, auxArray, 0, array.length);
-        // console.log('after actualmergesort');
+        console.log('start mergesort');
+        const arry = this.state.array.slice();
+        const auxArray = this.state.array.slice();
+
+        await this.mergeSortHelper(arry, auxArray, 0, arry.length - 1);
+
     }
 
-    actualMergeSort = async (array, auxArray, start, end) => {
+    mergeSortHelper = async (arry, auxArray, start, end) => {
+        console.log('start mergesorthelper');
         if (start === end) {
             return;
         }
-        let middle = Math.floor((start + end) / 2);
-        let midStart = middle + 1;
-        this.actualMergeSort(array, auxArray, start, middle);
-        this.actualMergeSort(array, auxArray, midStart, end);
-        // console.log('before merging')
-        // console.log(auxArray);
 
-        // console.log('start:' + start + ' middle:' + middle + ' midStart:' + midStart + ' end:' + end);
+        const middle = Math.floor((start + end) / 2);
+        await this.mergeSortHelper(arry, auxArray, start, middle);
+        await this.mergeSortHelper(arry, auxArray, middle + 1, end);
+        await this.doMerge(arry, auxArray, start, middle, end);
 
-        while (start < middle && midStart < end) {
-            console.log(array[start]);
-            console.log(array[midStart]);
-            if (array[start].height <= array[midStart].height) {
+    }
 
-                auxArray[start] = array[start];
-                start++;
+    doMerge = async (arry, auxArray, start, middle, end) => {
+        console.log('start doMerge');
+        let a = start; // Arry start
+        let b = start; // auxArray start
+        let c = middle + 1; // midStart
+
+        while (b <= middle && c <= end) {
+            arry[b].color = SECONDARY_COLOR;  // change color of comparing bars
+            arry[c].color = SECONDARY_COLOR;
+
+            if (auxArray[b] <= auxArray[c]) {
+
+                arry[a] = auxArray[b];
+                this.setState({ array: arry });
+                sleep(ANIMATION_SPEED_MS);
+
+                arry[a].color = PRIMARY_COLOR;  // change color of comparing bars
+                arry[c].color = PRIMARY_COLOR;
+
+                a++;
+                b++;
             } else {
-                auxArray[start] = array[midStart];
-                midStart++;
+                arry[a] = auxArray[c];
+                this.setState({ array: arry });
+                sleep(ANIMATION_SPEED_MS);
+
+                arry[b].color = PRIMARY_COLOR;  // change color of comparing bars
+                arry[a].color = PRIMARY_COLOR;
+
+                a++;
+                c++;
             }
         }
-        console.log("auxArray[start]:");
-        console.log(auxArray[start]);
 
-        if (start === middle) {
-            while (midStart < end) {
-                auxArray[midStart] = array[midStart];
-                midStart++;
-            }
-        } else {
-            while (start < middle) {
-                auxArray[start] = array[start];
-                start++;
-            }
+        while (b <= middle) {
+            arry[b].color = SECONDARY_COLOR;
+            arry[a] = auxArray[b];
+            this.setState({ array: arry });
+            sleep(ANIMATION_SPEED_MS);
+            arry[a].color = PRIMARY_COLOR;
+
+            a++;
+            b++;
         }
-        // console.log(auxArray);
-        this.setState({ array: auxArray });
-        // console.log('after merging');
-        // console.log('SHOULD BE DONE');
-        return;
-    };
+
+        while (c <= end) {
+            arry[c].color = SECONDARY_COLOR;
+            arry[a] = auxArray[c];
+            this.setState({ array: arry});
+            sleep(ANIMATION_SPEED_MS);
+
+            arry[a].color = PRIMARY_COLOR;
+            a++;
+            c++;
+        }
 
 
-    arrayLog() {
+    }
+
+
+    quickSort() {
+    }
+
+    arrayLog = async () => {
         console.log(this.state.array);
     }
 
@@ -207,31 +233,4 @@ export default class SortingVisualizer extends React.Component {
             </React.Fragment>
         );
     }
-    // animateSorting = async (sorted_array) => {
-    //     const { array } = this.state;
-    //     for (let i = 0; i < sorted_array.length; i++) {
-    //         const orig_index = array.findIndex(
-    //             (item) => item.height === sorted_array[i]
-    //         );
-    //         array[orig_index].color = SECONDARY_COLOR;
-    //         this.setState(array);
-    //         await sleep(ANIMATION_SPEED_MS);
-    //         arraymove(array, orig_index, i);
-    //         this.setState(array);
-
-    //         if (orig_index !== i) await sleep(ANIMATION_SPEED_MS);
-    //     }
-    // };
-
-    // insertionSort() {
-    //     const { array } = this.state;
-    //     const sorted = array.reduce((sorted, el) => {
-    //         let index = 0;
-    //         while (index < sorted.length && el.height < sorted[index]) index++;
-    //         sorted.splice(index, 0, el.height);
-    //         return sorted;
-    //     }, []);
-
-    //     this.animateSorting(sorted);
-    // }
 }

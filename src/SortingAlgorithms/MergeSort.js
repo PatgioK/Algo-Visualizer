@@ -2,7 +2,7 @@
 // https://github.com/clementmihailescu/Sorting-Visualizer-Tutorial
 export function getMergeSortAnimations(array) {
     const animations = [];
-    if(array.length <= 1) {
+    if (array.length <= 1) {
         return animations;
     }
     const auxArray = array.slice();
@@ -11,7 +11,7 @@ export function getMergeSortAnimations(array) {
 }
 
 function mergeSortHelper(mainArray, start, end, auxArray, animations) {
-    if(start === end) {
+    if (start === end) {
         return;
     }
     const middle = Math.floor((start + end) / 2);
@@ -20,16 +20,16 @@ function mergeSortHelper(mainArray, start, end, auxArray, animations) {
     doMerge(mainArray, start, middle, end, auxArray, animations);
 }
 
-function doMerge(mainArray, start, middle, end, auxArray, animations){
-    let a = start;
-    let b = start;
-    let c = middle + 1;
-    while(b <= middle && c <= end) {
+function doMerge(mainArray, start, middle, end, auxArray, animations) {
+    let a = start;  //arrStart
+    let b = start; //auxStart
+    let c = middle + 1;  //midStart
+    while (b <= middle && c <= end) {
         // These are the values we are comparing; push once to change color, push second time to revert color.
         animations.push([b, c]);
         animations.push([b, c]);
 
-        if(auxArray[b] <= auxArray[c]) {
+        if (auxArray[b] <= auxArray[c]) {
             // We overwrite the value at a in the original array with value at index b in the auxiliary array.
             animations.push([a, auxArray[b]]);
             mainArray[a++] = auxArray[b++];
@@ -40,7 +40,7 @@ function doMerge(mainArray, start, middle, end, auxArray, animations){
         }
     }
 
-    while(b <= middle) {
+    while (b <= middle) {
         // These are the values we are comparing; push once to change color, push second time to revert color.
         animations.push([b, b]);
         animations.push([b, b]);
@@ -50,7 +50,7 @@ function doMerge(mainArray, start, middle, end, auxArray, animations){
         mainArray[a++] = auxArray[b++];
     }
 
-    while(c <= end) {
+    while (c <= end) {
         // These are the values we are comparing; push once to change color, push second time to revert color.
         animations.push([c, c])
         animations.push([c, c])
@@ -60,7 +60,6 @@ function doMerge(mainArray, start, middle, end, auxArray, animations){
         mainArray[a++] = auxArray[c++];
     }
 }
- 
 
 
     // Followed from Clément Mihailescu's React tutorial 
